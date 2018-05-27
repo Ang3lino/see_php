@@ -1,25 +1,31 @@
 <?php
 
-	if ( isset($_GET['name']) ) {
-		$name = $_GET['name'];
-		echo "hola $name ";
-	} else  {
-		echo "nombre no puesto";
-	}
+if ( 
+	isset($_GET['name']) and 
+	isset($_GET['location']) and 
+	isset($_GET['email']) and 
+	isset($_GET['password']) 
+) {
+	include "open_connection.php";
+	$name = utf8_decode($_POST['name']); // funcion para dar soporte a acentos
+	$location = utf8_decode($_POST['location']);
+	$email = utf8_decode($_POST['email']);
+	$password = utf8_decode($_POST['password']);
 
-	if ( isset($_GET['name']) and isset($_GET['location']) 
-		and isset($_GET['email']) and isset($_GET['password']) ) {
+	$sql = "select * from votante where email like '%$email%';";
+	$result = $conn->query($sql);
+	$response =  array();
 
-		include("open_connection.php");
-		$name = utf8_decode($_GET['name']); // funcion para dar soporte a acentos
-		$location = utf8_decode($_GET['location']);
-		$email = utf8_decode($_GET['email']);
-		$password = utf8_decode($_GET['password']);
-
-		$connection->query("INSERT INTO votante(email, nombre, localidad, passwd) values ('$email', '$name', '$location', '$password');");
-
+	if ($result->num_rows > 0) {
+		array_push($response, array("success" => 'false'));
 	} else {
-		echo "no estan llenos todos los campos";
+		$sql = "INSERT INTO votante(email, nombre, localidad, passwd) values ('$email', '$name', '$location', '$password');";
+		$result = $conn->query($sql);
+		array_push($response, array("success" => 'true'));
 	}
+	echo json_encode($response);	
+} else die("no estan llenos todos los campos");
+
+$conn->close();
 
 ?>

@@ -1,13 +1,10 @@
 <?php
-	$host = "localhost";
-	$dbname = "see";
+	// cambie las credenciales de ser necesario
+	$host = "127.0.0.1"; 
 	$user = "root";
-	$password = "";
+	$password = "root";
+	$dbname = "see";
 
-	$connection = new mysqli($host, $user, $password, $dbname);
-	if ($connection->connect_errno) {
-		echo "no se pudo realizar la conexion";
-		exit();
-	}
-
+	$conn = new mysqli($host, $user, $password, $dbname);
+	if ($conn->connect_error) die($conn->connect_error);
 ?>
