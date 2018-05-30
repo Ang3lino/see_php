@@ -90,11 +90,8 @@ alter table prop_lugar add
 
 create table sala_votacion (
 	numero int not null auto_increment primary key, -- autoincrementable 
-	num_postulantes int,
 	duracion_hr real, -- double = real ?
-	num_votantes int,
-	t_inicio time, 
-	t_final time,
+	se_puede_votar boolean,
 	email_creador varchar(32) not null
 );
 
@@ -111,11 +108,10 @@ create table medio_votacion (
 
 alter table medio_votacion 
 	add foreign key(post_email) 
-	references postulante(post_email) ;
+	references postulante(post_email) on delete cascade on update cascade;
 alter table medio_votacion
 	add foreign key(email) 
-	references votante(email);
-
+	references votante(email) on delete cascade on update cascade;
 alter table medio_votacion 
 	add foreign key(numero) 
-	references sala_votacion(numero);
+	references sala_votacion(numero) on delete cascade on update cascade;

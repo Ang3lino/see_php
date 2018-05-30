@@ -2,7 +2,7 @@
 	// cambie las credenciales de ser necesario
 	$host = "127.0.0.1"; 
 	$user = "root";
-	$password = "root";
+	$password = "";
 	$dbname = "see";
 
 	$conn = new mysqli($host, $user, $password, $dbname);
