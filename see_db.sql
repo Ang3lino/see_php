@@ -32,7 +32,7 @@ create table postulante (
 	post_email varchar(32) not null,
 	post_logo varchar(256),
 	escolaridad varchar(32),
-	alma_mater varchar(16)
+	partido varchar(32)
 );
 
 alter table postulante add primary key (post_email);
@@ -41,35 +41,14 @@ alter table postulante add
 	references votante(email)
 	on delete cascade on update cascade;
 
-create table post_partido (
-	email varchar(32) not null,
-	partido varchar(32) not null
-);
-
-alter table post_partido add primary key (email, partido) ;
-alter table post_partido add 
-	foreign key (email) 
-	references postulante(post_email)
-	on update cascade on delete cascade ;
-
-create table post_posgrado (
-	email varchar(32) not null,
-	posgrado varchar(32) not null
-);
-
-alter table post_posgrado add primary key (email, posgrado) ;
-alter table post_posgrado add 
-	foreign key (email) 
-	references postulante(post_email)
-	on delete cascade on update cascade;
-
-create table post_sitio_web (
+-- aqui el usuario pondra algun sitio de contacto
+create table post_sitio (
 	email varchar(32) not null,
 	sitio varchar(64) not null
 );
 
-alter table post_sitio_web add primary key (email, sitio) ;
-alter table post_sitio_web add foreign key (email) 
+alter table post_sitio add primary key (email, sitio) ;
+alter table post_sitio add foreign key (email) 
 	references postulante(post_email)
 	on update cascade on delete cascade ;
 
