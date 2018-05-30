@@ -9,8 +9,10 @@ if ( // comprobaciones ambiguas pues en java nos aseguramos que sean no nulas
 	require_once "open_connection.php";
 	$name = utf8_decode($_POST['name']); // funcion para dar soporte a acentos
 	$location = utf8_decode($_POST['location']);
-	$email = utf8_decode($_POST['email']);
-	$password = utf8_decode($_POST['password']);
+	$email = ($_POST['email']);
+	$password = ($_POST['password']);
+	// $bitmap = $_POST['bitmap'];
+	// $perfil = 'perfil';
 	// se asume que el email entrante no tiene espacios
 	$sql = "select * from votante where email like '$email';"; 
 	$result = $conn->query($sql);
@@ -19,7 +21,8 @@ if ( // comprobaciones ambiguas pues en java nos aseguramos que sean no nulas
 	if ($result->num_rows > 0) {
 		array_push($response, array("success" => 'false'));
 	} else {
-		$sql = "INSERT INTO votante(email, nombre, localidad, passwd) values ('$email', '$name', '$location', '$password');";
+		$sql  = "INSERT INTO votante(email, nombre, localidad, passwd) " .
+				"VALUES ('$email', '$name', '$location', '$password');";
 		$result = $conn->query($sql);
 		array_push($response, array("success" => 'true'));
 		if (!$result) die('no se pudo');
