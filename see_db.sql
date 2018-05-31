@@ -1,4 +1,5 @@
 
+--drop table if exists see;
 create database see;
 use see;
 
@@ -15,14 +16,12 @@ ALTER DATABASE see DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 	correcion en los atributos multivalor de la propuesta del candidato
 	*/
 
--- insert into votante(email, nombre, localidad, passwd) 
---	values ("angel@outlook.com", "angel", "san pedro", "123");
 
 create table votante ( -- super entidad
 	email varchar(32) primary key not null,
 	nombre varchar(64),
 	localidad varchar(64),
-	sexo varchar(1),
+	sexo enum('m', 'f'), -- masculino, femenino. OJO que si pones algun caracter distino a este no se inserta nada
 	fecha_nacimiento date,
 	passwd varchar(32),
 	perfil varchar(256)  -- url de la foto de perfil 
@@ -91,7 +90,7 @@ alter table prop_lugar add
 create table sala_votacion (
 	numero int not null auto_increment primary key, -- autoincrementable 
 	duracion_hr real, -- double = real ?
-	se_puede_votar boolean,
+	se_puede_votar boolean, -- tiny int 
 	email_creador varchar(32) not null
 );
 
@@ -115,3 +114,4 @@ alter table medio_votacion
 alter table medio_votacion 
 	add foreign key(numero) 
 	references sala_votacion(numero) on delete cascade on update cascade;
+
