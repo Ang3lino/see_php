@@ -1,10 +1,6 @@
-
---drop table if exists see;
+drop table if exists see;
 create database see;
 use see;
-
--- soporte para acentos, también hay que cuidar el archivo php
-ALTER DATABASE see DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 /* cambios realizados:
 	tabla votante
@@ -16,6 +12,13 @@ ALTER DATABASE see DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 	correcion en los atributos multivalor de la propuesta del candidato
 	*/
 
+-- drop database see_test;
+-- create database see_test;
+-- use see_test;
+
+-- soporte para acentos, también hay que cuidar el archivo php
+
+ALTER DATABASE see DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 create table votante ( -- super entidad
 	email varchar(32) primary key not null,
@@ -27,66 +30,6 @@ create table votante ( -- super entidad
 	perfil varchar(256)  -- url de la foto de perfil 
 );
 
-create table postulante (
-	post_email varchar(32) not null,
-	post_logo varchar(256),
-	escolaridad varchar(32),
-	partido varchar(32)
-);
-
-alter table postulante add primary key (post_email);
-alter table postulante add 
-	foreign key(post_email) 
-	references votante(email)
-	on delete cascade on update cascade;
-
--- aqui el usuario pondra algun sitio de contacto
-create table post_sitio (
-	email varchar(32) not null,
-	sitio varchar(64) not null
-);
-
-alter table post_sitio add primary key (email, sitio) ;
-alter table post_sitio add foreign key (email) 
-	references postulante(post_email)
-	on update cascade on delete cascade ;
-
-create table propuesta (
-	post_email varchar(32) not null,
-	nombre varchar(64),
-	presupuesto decimal(10, 2),
-	descripcion varchar(64),
-	primary key (post_email, nombre)
-);
-	
-alter table propuesta add foreign key(post_email) 
-	references postulante(post_email)
-	on delete cascade on update cascade;
-
-create table prop_beneficio (
-	post_email varchar(32) not null,
-	prop_nombre varchar(64) not null,
-	descripcion varchar(64) not null,
-	primary key (post_email, prop_nombre, descripcion)
-);
-
-alter table prop_beneficio add 
-	foreign key(post_email, prop_nombre) 
-	references propuesta(post_email, nombre)
-	on delete cascade on update cascade;
-
-create table prop_lugar (
-	post_email varchar(32) not null,
-	prop_nombre varchar(64) not null,
-	lugar varchar(64) not null,
-	primary key (post_email, prop_nombre, lugar)
-);
-
-alter table prop_lugar add 
-	foreign key(post_email, prop_nombre) 
-	references propuesta(post_email, nombre)
-	on delete cascade on update cascade;
-
 create table sala_votacion (
 	numero int not null auto_increment primary key, -- autoincrementable 
 	duracion_hr real, -- double = real ?
@@ -95,7 +38,61 @@ create table sala_votacion (
 );
 
 alter table sala_votacion add foreign key (email_creador) references votante(email)
-	on delete cascade on update cascade ;
+	on delete cascade ;
+
+create table postulante (
+	post_email varchar(32) not null,
+	sala_num int not null,
+	post_logo varchar(256),
+	escolaridad varchar(32),
+	partido varchar(32),
+	primary key (post_email, sala_num),
+	foreign key (post_email) references votante(email) on delete cascade,
+	foreign key(sala_num) references sala_votacion(numero) on delete cascade
+);
+
+-- aqui el usuario pondra algun sitio de contacto
+create table post_sitio (
+	num int not null,	
+	email varchar(32) not null,
+	sitio varchar(64) not null,
+	primary key (num, email, sitio),
+	foreign key (email, num) references postulante (post_email, sala_num)
+		on delete cascade
+);
+
+create table propuesta (
+	num int not null,
+	post_email varchar(32) not null,
+	nombre varchar(64),
+	presupuesto decimal(10, 2),
+	descripcion varchar(64),
+	primary key (num, post_email, nombre),
+	foreign key (post_email, num) references postulante(post_email, sala_num) 
+		on delete cascade
+);
+	
+-- el orden de las llaves debe coincidir
+create table prop_beneficio (
+	num int not null,
+	post_email varchar(32) not null,
+	prop_nombre varchar(64) not null,
+	descripcion varchar(64) not null,
+	primary key (num, post_email, prop_nombre, descripcion),
+	foreign key (num, post_email, prop_nombre)  
+		references propuesta (num, post_email, nombre)
+		on delete cascade
+);
+
+create table prop_lugar (
+	num int not null,
+	post_email varchar(32) not null,
+	prop_nombre varchar(64) not null,
+	lugar varchar(64) not null,
+	primary key (num, post_email, prop_nombre, lugar),
+	foreign key (num, post_email, prop_nombre) 
+		references propuesta(num, post_email, nombre)
+);
 
 -- relacion en la que intervienen las personas con la votacion
 create table medio_votacion ( 
@@ -107,11 +104,14 @@ create table medio_votacion (
 
 alter table medio_votacion 
 	add foreign key(post_email) 
-	references postulante(post_email) on delete cascade on update cascade;
+	references postulante(post_email) on delete cascade ;
+
 alter table medio_votacion
 	add foreign key(email) 
 	references votante(email) on delete cascade on update cascade;
+
 alter table medio_votacion 
 	add foreign key(numero) 
-	references sala_votacion(numero) on delete cascade on update cascade;
+	references sala_votacion(numero) on delete cascade ;
+
 
