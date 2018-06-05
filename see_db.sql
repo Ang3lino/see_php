@@ -2,16 +2,6 @@ drop table if exists see;
 create database see;
 use see;
 
-/* cambios realizados:
-	tabla votante
-		nacionalidad y curp, no todas la naciones tienen curp y no es posible validar 
-			si este curp ya esta registrado
-		agregado sexo y fecha de nacimiento
-	entidad regulador borrada
-	entidad regulador plantilla
-	correcion en los atributos multivalor de la propuesta del candidato
-	*/
-
 -- drop database see_test;
 -- create database see_test;
 -- use see_test;
@@ -32,7 +22,6 @@ create table votante ( -- super entidad
 
 create table sala_votacion (
 	numero int not null auto_increment primary key, -- autoincrementable 
-	duracion_hr real, -- double = real ?
 	se_puede_votar boolean, -- tiny int 
 	email_creador varchar(32) not null
 );
