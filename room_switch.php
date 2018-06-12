@@ -8,7 +8,7 @@ if (isset($_POST['control']) and isset($_POST['number']))  {
 
 	// esta sentencia no funciono ?!
 	// $query = 'update sala_votacion set se_puede_votar = 0 where numero = $n; '; 
-	if ($control == '1')
+	if ($control == 'true')
 		$query = 'update sala_votacion set se_puede_votar = 1 where numero = ' . $n . '; ';
 	else 
 		$query = 'update sala_votacion set se_puede_votar = 0 where numero = ' . $n . '; ';
@@ -19,8 +19,8 @@ if (isset($_POST['control']) and isset($_POST['number']))  {
 	if ($result) array_push($response, array('success' => true));
 	else array_push($response, array('success' => false));
 	
-	// $response[] = array('query' => $query);
-	// $response[] = array('control' => $control);
+	$response[] = array('query' => $query);
+	$response[] = array('control' => $control);
 
 	echo json_encode($response);	
 

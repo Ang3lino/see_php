@@ -26,7 +26,7 @@ if ( all_set() ) {
 		array_push($response, array("success" => 'false'));
 	} else {
 		if ($bitmap) { // si se nos paso un bitmap (bm != null)
-			$perfil = 'perfil.jpg'; // 
+			$perfil = time() . uniqid(rand()) . '.jpg'; // nombre unico para la imagen que se subio
 			$sql  = "INSERT INTO votante(email, nombre, localidad, sexo, fecha_nacimiento, passwd, perfil) " .
 					"VALUES ('$email', '$name', '$location', '$gender', '$birthday', '$password', '$perfil');";
 			$upload_path = "img/$perfil"; // implicitamente $ubicaciondeestescript/img/perfil
