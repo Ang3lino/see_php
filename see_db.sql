@@ -1,4 +1,4 @@
-drop table if exists see;
+drop database if exists see;
 create database see;
 use see;
 
