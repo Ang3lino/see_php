@@ -46,30 +46,33 @@ DELIMITER &
 CREATE PROCEDURE random_votes()
 BEGIN
   DECLARE i INT DEFAULT (SELECT min(numero) FROM see.sala_votacion);
-  DECLARE j INT;
+  DECLARE j INT ;
   DECLARE rooms_count INT DEFAULT (SELECT max(numero) FROM see.sala_votacion);
-  DECLARE postulant_count INT ;
+  DECLARE postulant_count, upper_limit INT ;
   DECLARE voter, random_postulant VARCHAR(32);
-  DECLARE upper_limit INT;
   WHILE i <= rooms_count DO 
     SET postulant_count = (SELECT count(*) FROM see.postulante WHERE sala_num = i);
-    SET j = 1;
-    WHILE j <= postulant_count DO
-      SET voter = (SELECT post_email 
-          FROM see.postulante WHERE sala_num = i LIMIT j, 1);
+    SET j = 0;
+    CREATE TABLE integrants_from_lobby 
+        SELECT * FROM see.postulante WHERE sala_num = i;
+    WHILE j < postulant_count DO
       SET upper_limit = random_int_inclusive(1, postulant_count) - 1;
+      SET voter = (SELECT post_email 
+          FROM integrants_from_lobby LIMIT j, 1);
       SET random_postulant = (SELECT post_email 
-          FROM see.postulante WHERE sala_num = i LIMIT upper_limit, 1);
+          FROM integrants_from_lobby LIMIT upper_limit, 1);
       INSERT INTO see.medio_votacion(post_email, email, numero) 
           VALUES (random_postulant, voter, i);
       SET j = j + 1;
     END WHILE;
+    DROP TABLE integrants_from_lobby;
     SET i = i + 1;
   END WHILE;
   END &
 DELIMITER ;
 --CALL random_votes;
 
+-- select a random integer in [a, b]
 DROP FUNCTION IF EXISTS random_int_inclusive ;
 DELIMITER &
 CREATE FUNCTION random_int_inclusive(a INT, b INT) 
@@ -80,14 +83,7 @@ BEGIN
   END &
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS unique_email;
-DELIMITER &
-CREATE PROCEDURE unique_email()
-BEGIN
-  UPDATE galardonado MODIFY Email = concat(RFC, '@hotmail.com') ;
-END &
-DELIMITER ;
-
 CALL load_galardonados_as_voters;
-CALL unique_email;
+UPDATE galardonado SET Email = concat(RFC, '@hotmail.com') ;
 CALL load_postulants;
+CALL random_votes;
