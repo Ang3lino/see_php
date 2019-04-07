@@ -22,7 +22,19 @@ function can_we_vote($conn, $n) {
 	return $row['se_puede_votar'];
 }
 
-if ( isset($_POST['number']) and isset($_POST['email']) and isset($_POST['post_email']) ){
+// not working, not used
+function repeated_vote($conn, $email, $n) {
+	$query = "CALL did_vote('{$email}', {$n});";
+	$result = $conn->query($query);
+	if (!$result) die ($conn->error);
+
+	// $result->data_seek(0);
+	$row = $result->fetch_array(MYSQLI_ASSOC);
+	return (boolean) $row['done'];
+}
+
+if ( isset($_POST['number']) and isset($_POST['email']) and 
+		isset($_POST['post_email']) ){
 	require_once "open_connection.php";
 
 	$n = $_POST['number'];
@@ -47,11 +59,10 @@ if ( isset($_POST['number']) and isset($_POST['email']) and isset($_POST['post_e
 
 		vote($conn, $n, $email, $post_email);
 
-		array_push($response, 
-			array(
+		array_push($response, array(
 				"can_we_vote" => true,
 				"changed" => $repeated_vote
-			));
+		));
 	} else array_push($response, array("can_we_vote" => false));
 
 	echo json_encode($response);	

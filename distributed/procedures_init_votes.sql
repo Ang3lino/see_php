@@ -89,22 +89,6 @@ DELIMITER ;
 --   sala_n INT
 -- );
 
--- see's procedure
-DELIMITER &
-DROP PROCEDURE IF EXISTS get_votes_count;
-CREATE PROCEDURE get_votes_count(IN i INT)
-BEGIN 
-  SELECT v.nombre, count(*) AS votes_count
-    FROM see.medio_votacion m 
-      INNER JOIN see.votante v ON m.post_email = v.email 
-    WHERE m.numero = i
-    GROUP BY post_email
-    ORDER BY votes_count DESC
-  ;
-  END &
-DELIMITER ;
-
-
 -- USE galardonado;
 
 -- SELECT Galardon, count(*) AS count_galardon
@@ -169,6 +153,7 @@ CALL random_votes;
 
 -- CALL count_all_votes;
 
+USE see;
 CALL get_votes_count(1);
 CALL get_votes_count(2);
 CALL get_votes_count(3);
