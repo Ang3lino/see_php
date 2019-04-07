@@ -32,8 +32,8 @@ CREATE PROCEDURE did_vote (
     END &
 DELIMITER ;
 
-CALL did_vote("SALR400622@hotmail.com", 3);
-CALL did_vote("PETS750209@hotmail.com", 4);
+-- CALL did_vote("SALR400622@hotmail.com", 3);
+-- CALL did_vote("PETS750209@hotmail.com", 4);
 
 -- SELECT CHARACTER_MAXIMUM_LENGTH 
 --             FROM information_schema.columns 
@@ -60,12 +60,12 @@ DELIMITER ;
 
 -- CALL get_votes_count(8);
 
-UPDATE votante 
-    SET nombre = 'Sonia Mayra Perez Tapia'
-    WHERE email = 'PETS750209@hotmail.com';
+-- UPDATE votante 
+--     SET nombre = 'Sonia Mayra Perez Tapia'
+--     WHERE email = 'PETS750209@hotmail.com';
 
-UPDATE votante 
-    SET nombre = 'Sonia Mayra Pérez Tapia'
-    WHERE email = 'PETS750209@hotmail.com';
+-- UPDATE votante 
+--     SET nombre = 'Sonia Mayra Pérez Tapia'
+--     WHERE email = 'PETS750209@hotmail.com';
 
 -- SELECT CHARACTER_MAXIMUM_LENGTH FROM information_schema.columns WHERE TABLE_NAME = 'medio_votacion' AND COLUMN_NAME = 'email';
