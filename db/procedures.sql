@@ -26,11 +26,4 @@ UPDATE votante
     SET nombre = 'Sonia Mayra Pérez Tapia'
     WHERE email = 'PETS750209@hotmail.com';
 
-	$query = 'select v.nombre, p.post_email, p.partido ' .
-				'from votante v, postulante p, sala_votacion s ' . 
-				'where p.post_email = v.email ' .
-				'	and p.sala_num = s.numero ' .
-				'	and s.numero = ' . $n . ' ' .
-				'order by v.nombre;' ; 
-
 -- SELECT CHARACTER_MAXIMUM_LENGTH FROM information_schema.columns WHERE TABLE_NAME = 'medio_votacion' AND COLUMN_NAME = 'email';

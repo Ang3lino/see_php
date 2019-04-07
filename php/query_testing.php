@@ -1,8 +1,9 @@
 <?php
 
 require_once "open_connection.php";
+mysqli_set_charset($conn,"utf8");
 
-$n = 5;
+$n = 4;
 $query = "CALL get_candidates({$n});";
 
 $result = $conn->query($query);
@@ -17,11 +18,15 @@ for ($i = 0; $i < $len; $i++) {
 	$result->data_seek($i);
 	$row = $result->fetch_array(MYSQLI_ASSOC);
 	$names[] = $row['nombre'];
-	$emails[] = $row['email'];
-	echo json_encode($names);
-	echo json_encode($emails);
+	$emails[] = $row['post_email'];
+	// echo json_encode($names, JSON_UNESCAPED_UNICODE);
+	// echo json_encode($emails, JSON_UNESCAPED_UNICODE);
 }
 
+echo json_encode($names, JSON_UNESCAPED_UNICODE);
+echo json_encode($emails, JSON_UNESCAPED_UNICODE);
+// echo json_encode($names);
+// echo json_encode($emails);
 $conn->close();
 
 // $n = 27;
