@@ -1,72 +1,31 @@
 <?php
 
-require_once "open_connection.php";
-mysqli_set_charset($conn,"utf8");
+	require_once "open_connection.php";
 
-$n = 4;
-$query = "CALL get_candidates({$n});";
+	// CALL did_vote("PETS750209@hotmail.com", 4);
+	// $n = 4;
+	// $email = "PETS750209@hotmail.com";
 
-$result = $conn->query($query);
-if (!$result) die ($conn->error);
+	// "SALR400622@hotmail.com", 3
+	$n = 3;
+	$email ="SALR400622@hotmail.com";
 
-$len = $result->num_rows;
-$response = array();
-$names = array();
-$emails = array();
+	$query = "CALL did_vote('{$email}', {$n});";
 
-for ($i = 0; $i < $len; $i++) {
-	$result->data_seek($i);
+	$result = $conn->query($query);
+	if (!$result) die ($conn->error);
+
+	$response = array();
+	// $result->data_seek(0);
 	$row = $result->fetch_array(MYSQLI_ASSOC);
-	$names[] = $row['nombre'];
-	$emails[] = $row['post_email'];
-	// echo json_encode($names, JSON_UNESCAPED_UNICODE);
-	// echo json_encode($emails, JSON_UNESCAPED_UNICODE);
-}
+	array_push($response,  array("done" => $row['done'] ) );
+	$b_done = (boolean) $row['done'];
 
-echo json_encode($names, JSON_UNESCAPED_UNICODE);
-echo json_encode($emails, JSON_UNESCAPED_UNICODE);
-// echo json_encode($names);
-// echo json_encode($emails);
-$conn->close();
+	if ($b_done) echo 'yes'; 
+	else echo 'no';
 
-// $n = 27;
+	echo json_encode($response);
 
-// $query = "SELECT v.nombre, v.email from postulante p, sala_votacion s, votante v
-// 			where p.sala_num = s.numero and 
-// 				p.sala_num = {$n} and 
-// 				v.email = p.post_email ; ";
-
-// $result = $conn->query($query);
-// if (!$result) die ($conn->error);
-
-// $len = $result->num_rows;
-// $response = array();
-// $names = array();
-// $emails = array();
-// for ($i = 0; $i < $len; $i++) {
-// 	$result->data_seek($i);
-// 	$row = $result->fetch_array(MYSQLI_ASSOC);
-// 	$names[] = $row['nombre'];
-// 	$emails[] = $row['email'];
-// }
-
-// $i = 0;
-// foreach ($emails as $key => $value) {
-// 	$query = "select count(*) as count
-// 				from medio_votacion m, sala_votacion s
-// 				where m.post_email like '$value' and
-// 					s.numero = {$n} and
-// 					s.numero = m.numero; " ; 
-// 	$result = $conn->query($query);
-// 	$result->data_seek($i);
-// 	$row = $result->fetch_array(MYSQLI_ASSOC);
-// 	array_push($response, array("name" => $names[$i], "email" => $value, "count" => $row['count']));
-// 	$i++;
-// }
-
-// echo json_encode($response);
-
-// $conn->close();
-
+	$conn->close();
 
 ?>
