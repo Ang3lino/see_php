@@ -83,53 +83,97 @@ BEGIN
   END &
 DELIMITER ;
 
-CREATE TABLE see.conteo (
-  email VARCHAR(32),
-  voto_conteo INT, 
-  sala_n INT
-);
+-- CREATE TABLE see.conteo (
+--   email VARCHAR(32),
+--   voto_conteo INT, 
+--   sala_n INT
+-- );
 
-DROP PROCEDURE IF EXISTS count_votes;
+-- see's procedure
 DELIMITER &
-CREATE PROCEDURE count_votes(IN p_n INT)
-BEGIN
-  DECLARE postulant_email VARCHAR(32);
-  DECLARE has_next INT DEFAULT true;
-  DECLARE cur_postulants CURSOR FOR SELECT DISTINCT post_email FROM see.postulante 
-      WHERE sala_num = p_n;
-  DECLARE CONTINUE HANDLER FOR NOT FOUND SET has_next = FALSE;
-  OPEN cur_postulants;
-  WHILE has_next DO 
-    FETCH cur_postulants INTO postulant_email;
-    INSERT INTO see.conteo(email, voto_conteo, sala_n) VALUES (
-        postulant_email, 
-        ( SELECT count(*) FROM see.medio_votacion 
-            WHERE post_email = postulant_email 
-                AND numero = p_n),
-        p_n
-    );
-  END WHILE;
-  CLOSE cur_postulants;
+DROP PROCEDURE IF EXISTS get_votes_count;
+CREATE PROCEDURE get_votes_count(IN i INT)
+BEGIN 
+  SELECT v.nombre, count(*) AS votes_count
+    FROM see.medio_votacion m 
+      INNER JOIN see.votante v ON m.post_email = v.email 
+    WHERE m.numero = i
+    GROUP BY post_email
+    ORDER BY votes_count DESC
+  ;
   END &
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS count_all_votes;
-DELIMITER &
-CREATE PROCEDURE count_all_votes()
-BEGIN
-  DECLARE i INT DEFAULT 1 ;
-  DECLARE n INT DEFAULT (SELECT max(ID) FROM galardon);
-  WHILE i <= n DO 
-    CALL count_votes(i);
-    SET i = i + 1;
-    SELECT * from see.conteo;
-  END WHILE;
-  END &
-DELIMITER ;
+
+-- USE galardonado;
+
+-- SELECT Galardon, count(*) AS count_galardon
+--   FROM galardonado.Galardonado 
+--   GROUP BY Galardon 
+-- ;
+
+-- -- SEE 
+-- SELECT post_email, count(*) AS votes_count
+--   FROM medio_votacion 
+--   WHERE numero = 8 
+--   GROUP BY post_email 
+-- ;
+
+-- SELECT * FROM medio_votacion 
+--   WHERE numero = 8
+--   ORDER BY post_email 
+-- ;
+
+-- DROP PROCEDURE IF EXISTS count_votes;
+-- DELIMITER &
+-- CREATE PROCEDURE count_votes(IN p_n INT)
+-- BEGIN
+--   DECLARE postulant_email VARCHAR(32);
+--   DECLARE has_next INT DEFAULT true;
+--   DECLARE cur_postulants CURSOR FOR SELECT DISTINCT post_email FROM see.postulante 
+--       WHERE sala_num = p_n;
+--   DECLARE CONTINUE HANDLER FOR NOT FOUND SET has_next = FALSE;
+--   OPEN cur_postulants;
+--   WHILE has_next DO 
+--     FETCH cur_postulants INTO postulant_email;
+--     INSERT INTO see.conteo(email, voto_conteo, sala_n) VALUES (
+--         postulant_email, 
+--         ( SELECT count(*) FROM see.medio_votacion 
+--             WHERE post_email = postulant_email 
+--                 AND numero = p_n),
+--         p_n
+--     );
+--   END WHILE;
+--   CLOSE cur_postulants;
+--   END &
+-- DELIMITER ;
+
+-- DROP PROCEDURE IF EXISTS count_all_votes;
+-- DELIMITER &
+-- CREATE PROCEDURE count_all_votes()
+-- BEGIN
+--   DECLARE i INT DEFAULT 1 ;
+--   DECLARE n INT DEFAULT (SELECT max(ID) FROM galardon);
+--   WHILE i <= n DO 
+--     CALL count_votes(i);
+--     SET i = i + 1;
+--     SELECT * from see.conteo;
+--   END WHILE;
+--   END &
+-- DELIMITER ;
 
 UPDATE galardonado SET Email = concat(RFC, '@hotmail.com') ;
 CALL load_galardonados_as_voters;
 CALL load_postulants;
 CALL random_votes;
 
-CALL count_all_votes;
+-- CALL count_all_votes;
+
+CALL get_votes_count(1);
+CALL get_votes_count(2);
+CALL get_votes_count(3);
+CALL get_votes_count(4);
+CALL get_votes_count(5);
+CALL get_votes_count(6);
+CALL get_votes_count(7);
+CALL get_votes_count(8);
