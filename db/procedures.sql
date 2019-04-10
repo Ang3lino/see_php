@@ -6,7 +6,7 @@ DELIMITER &
 CREATE PROCEDURE get_candidates(
     IN n INT
 ) BEGIN 
-    SELECT v.nombre, p.post_email, 
+    SELECT v.nombre, p.post_email
         FROM postulante p 
         JOIN votante v ON p.post_email = v.email 
         JOIN sala_votacion s ON p.sala_num = s.numero 
